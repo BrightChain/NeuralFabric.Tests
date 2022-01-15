@@ -15,7 +15,7 @@ using ConfigurationSection = Microsoft.Extensions.Configuration.ConfigurationSec
 namespace NeuralFabric.Tests;
 
 [TestClass]
-public class TapestryTest
+public class TapestryTests
 {
     private ILoggerFactory _loggerFactory;
     private IConfiguration _configuration;
