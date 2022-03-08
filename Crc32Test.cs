@@ -23,11 +23,13 @@ public class Crc32Test
     {
         var data = new byte[hexString.Length / 2];
         for (int offset = 0, dataOffset = 0; offset < hexString.Length; offset += 2)
+        {
             data[dataOffset++] = Convert.ToByte(
                 value: hexString.Substring(
                     startIndex: offset,
                     length: 2),
                 fromBase: 16);
+        }
 
         var actual = Crc32.ComputeChecksum(bytes: data);
         Assert.AreEqual(

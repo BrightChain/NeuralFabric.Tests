@@ -1,26 +1,21 @@
-﻿using System.Configuration;
-using System.Data.Common;
-using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.IO;
+using Bogus.DataSets;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NeuralFabric.Models;
 using Moq;
-using Bogus;
-using Bogus.DataSets;
-using Microsoft.Extensions.DependencyInjection;
-using ConfigurationSection = Microsoft.Extensions.Configuration.ConfigurationSection;
+using NeuralFabric.Models;
 
 namespace NeuralFabric.Tests;
 
 [TestClass]
 public class TapestryTests
 {
-    private ILoggerFactory _loggerFactory;
     private IConfiguration _configuration;
-    private IServiceCollection _services;
     private ILogger _logger;
+    private ILoggerFactory _loggerFactory;
+    private IServiceCollection _services;
 
     [TestInitialize]
     public void PreTestSetup()
@@ -31,19 +26,20 @@ public class TapestryTests
         this._services = new Mock<IServiceCollection>().Object;
         this._logger = new Mock<ILogger>().Object;
 
-        Mock<IConfigurationSection> mockPathSection = new Mock<IConfigurationSection>();
-        mockPathSection.Setup(x => x.Value).Returns(Path.GetTempPath());
+        var mockPathSection = new Mock<IConfigurationSection>();
+        mockPathSection.Setup(expression: x => x.Value).Returns(value: Path.GetTempPath());
 
         var mockNodeSection = new Mock<IConfigurationSection>();
-        mockNodeSection.Setup(x => x.GetSection(It.Is<string>(k => k == "BasePath"))).Returns(mockPathSection.Object);
+        mockNodeSection.Setup(expression: x => x.GetSection(It.Is<string>(k => k == "BasePath"))).Returns(value: mockPathSection.Object);
 
-        mockConfiguration.Setup(x => x.GetSection(It.Is<string>(k => k == "NodeOptions"))).Returns(mockNodeSection.Object);
+        mockConfiguration.Setup(expression: x => x.GetSection(It.Is<string>(k => k == "NodeOptions")))
+            .Returns(value: mockNodeSection.Object);
 
         var factoryMock = new Mock<ILoggerFactory>();
 
         factoryMock
             .SetupAllProperties()
-            .Setup(f => f.CreateLogger(It.IsAny<string>())).Returns(this._logger);
+            .Setup(expression: f => f.CreateLogger(It.IsAny<string>())).Returns(value: this._logger);
 
         this._loggerFactory = factoryMock.Object;
     }
@@ -58,4 +54,3 @@ public class TapestryTests
             collectionName: "test");
     }
 }
-
